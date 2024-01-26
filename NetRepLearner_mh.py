@@ -8,24 +8,13 @@ import torch.nn as nn
 #torch.distributions.normal.Normal(loc, scale, validate_args=None)
 torch.set_printoptions(sci_mode=False)
 import networkx as nx
-from netAPI import loadNetworkMat
-from netAPI import adjacency_matrix
-from GNNAPI import GNN_VNN_Layer
-from GNNAPI import VNN_MLP
-from GNNAPI import VNNDefaultConfig
-from GNNAPI import buildLaplacian
-from GNNAPI import buildVNNConfig
-# from GNNAPI import matrixNormalize
-# from GNNAPI import GNN_VNN_Multiclass_Layer
 from GNNAPI import NNmodel
-# from tensorflow.keras.utils import to_categorical
-from GNNAPI import dmerge
-# from GNNClusteringV2 import baselinePartition 
+
 import copy
 
 
 class NetReprLearning(NNmodel):
-    def __init__(self,city,fts,GNNConfigs, VNNConfig, model='p',  
+    def __init__(self,fts,GNNConfigs, VNNConfig, model='p',  
                  directembedding = False,attention=False,VNNattraction = False):
         super().__init__()
         self.city = city
@@ -74,7 +63,8 @@ class NetReprLearning(NNmodel):
                 cumulative = True))
 
     # X is nodefts
-    def fit(self,city,A,X,OD,between_fts,Avalid=None,Xvalid=None,ODvalid=None,between_fts_valid=None, n_epochs = 1000, 
+    def fit(self,city,A,X,OD,between_fts,Avalid=None,Xvalid=None,ODvalid=None,between_fts_valid=None, 
+        Atest=None,Xtest=None,ODtest=None,between_fts_test=None, n_epochs = 1000, 
             lr = 0.005, SEED = 1, interim_output_freq = 200):
 #         vis = visdom.Visdom()
         self.Y = torch.FloatTensor(OD)
@@ -87,7 +77,9 @@ class NetReprLearning(NNmodel):
 #         print('X.shape in fit',X.shape)
         #self.cs = copy.deepcopy(self.init_checksum)
         super().fit(city,A, X,self.Y,between_fts,
-                    Avalid=Avalid,Xvalid=Xvalid,ODvalid=ODvalid,between_fts_valid=between_fts_valid, n_epochs = n_epochs, 
+                    Avalid=Avalid,Xvalid=Xvalid,ODvalid=ODvalid,between_fts_valid=between_fts_valid,
+                    Atest=Atest,Xtest=Xtest,ODtest=ODtest,between_fts_test=between_fts_test,
+                     n_epochs = n_epochs, 
                     lr = lr, SEED = SEED, interim_output_freq = interim_output_freq)
     
     
